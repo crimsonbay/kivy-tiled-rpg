@@ -1,0 +1,114 @@
+#:kivy 1.11.1
+#:import os os
+
+<CollisionEditor>:
+    tileset: tileset
+    col_count: col_count
+
+    BoxLayout:
+        orientation: 'vertical'
+
+        BoxLayout:
+            size_hint_y: None
+            height: 30
+
+            Button:
+                text: 'Load'
+                on_release: root.show_load()
+
+            Button:
+                text: 'Save'
+                on_release: root.show_save() #root.tileset.save_collisions()
+
+        BoxLayout:
+
+            ScrollView:
+
+                EditorImage:
+                    id: tileset
+                    size: (self.parent.width, self.parent.width * self.texture_size[1] // self.texture_size[0]) if self.texture_size[0] else (0,0)
+                    size_hint: (None, None)
+                    keep_ratio: True
+                    allow_stretch: True
+                    col_count: col_count
+
+            BoxLayout:
+                orientation: 'vertical'
+                size_hint_x: 0.2
+                width: self.parent.width // 4
+
+                Label:
+                    size_hint: (1, 0.05)
+                    text: "Collisions count:"
+
+                Spinner:
+                    id: col_count
+                    size_hint: (1, 0.1)
+                    text: str(root.tileset.collisions_count)
+                    values: '2', '3', '4', '5', '6', '7', '8'
+                    on_text: root.tileset.change_collisions_count(self, self.text)
+
+                Label:
+                    size_hint: (1, 0.05)
+                    text: "Tile Width:"
+
+                NumberInput:
+                    text: str(root.tileset.tilesize[0])
+                    size_hint: (1, 0.1)
+                    multiline: False
+                    font_size: self.height - 10
+                    on_text: root.tileset.change_tile_size(0, self.text)
+
+                Label:
+                    size_hint: (1, 0.05)
+                    text: "Tile Height:"
+
+                NumberInput:
+                    text: str(root.tileset.tilesize[1])
+                    size_hint: (1, 0.1)
+                    multiline: False
+                    font_size: self.height - 10
+                    on_text: root.tileset.change_tile_size(1, self.text)
+
+                BoxLayout:
+                    hint_size: (1, 1)
+
+<LoadDialog>:
+    BoxLayout:
+        size: root.size
+        pos: root.pos
+        orientation: "vertical"
+
+        FileChooserListView:
+            id: filechooser
+            path: os.getcwd()
+
+        BoxLayout:
+            size_hint_y: None
+            height: 30
+
+            Button:
+                text: "Cancel"
+                on_release: root.cancel()
+
+            Button:
+                text: "Load"
+                on_release: root.load(filechooser.path, filechooser.selection)
+
+<SaveDialog>:
+    # text_input: text_input
+    BoxLayout:
+        size: root.size
+        pos: root.pos
+        orientation: "vertical"
+
+        BoxLayout:
+            size_hint_y: None
+            height: 30
+            Button:
+                text: "Cancel"
+                on_release: root.cancel()
+
+            Button:
+                text: "Save"
+                on_release: root.save()
